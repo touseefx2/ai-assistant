@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 export default function DashboardScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Dashboard screen</Text>
+    <View className="flex-1 bg-white items-center justify-center gap-2">
+      <Text className="text-4xl text-black font-extrabold">Dashboard screen</Text>
       {/* <Pressable onPress={() => router.replace("/(main)/(drawer)")}>
         <Text style={styles.button}>Go to main</Text>
       </Pressable> */}
@@ -11,22 +11,3 @@ export default function DashboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-  },
-  text: {
-    fontSize: 40,
-    color: "black",
-    fontFamily: "Baloo2-ExtraBold"
-  },
-  button: {
-    fontSize: 20,
-    textDecorationLine: "underline",
-    color: "#fff",
-  },
-});

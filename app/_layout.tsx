@@ -2,25 +2,19 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { View } from "react-native";
+import "../global.css";
 
 export default function RootLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+    <View className="flex-1 bg-white">
       <StatusBar style="dark" />
       <Stack
-      initialRouteName="onBoarding"
+        initialRouteName="(auth)"
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#FFFFFF" },
         }}
       >
-        <Stack.Screen name="onBoarding" />
-        <Stack.Screen
-          name="detail/[id]"
-          options={{
-            title: "Detail",
-          }}
-        />
+        <Stack.Screen name="(auth)" options={{ title: "Welcome" }} />
       </Stack>
     </View>
   );
