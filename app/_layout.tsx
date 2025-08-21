@@ -9,6 +9,7 @@ import i18n from '../src/i18n';
 import type { RootState } from '../src/state/store';
 import { hydrateFromStorage, store } from '../src/state/store';
 import { useAppSelector } from '../src/state/useStoreHooks';
+import { getThemeTokens } from '../src/theme/tokens';
 
 export default function RootLayout() {
   return (
@@ -23,14 +24,14 @@ export default function RootLayout() {
 function RootContent() {
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const language = useAppSelector((s: RootState) => s.language.current);
-  const themeClass = theme === 'black' ? 'theme-black' : theme === 'blue' ? 'theme-blue' : 'theme-white';
+  const tokens = getThemeTokens(theme);
 
   useEffect(() => {
     i18n.changeLanguage(language);
   }, [language]);
 
   return (
-    <View className={`flex-1 bg-app ${themeClass}`}>
+    <View className={`flex-1 ${tokens.bgClass}`}>
       <StatusBar style="dark" />
       <Stack
         initialRouteName="(auth)"

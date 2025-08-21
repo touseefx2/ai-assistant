@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import type { RootState } from '../state/store';
 import { useAppSelector } from '../state/useStoreHooks';
+import { getThemeTokens } from '../theme/tokens';
 
 interface DropdownProps<T extends string> {
 	label: string;
@@ -19,10 +20,7 @@ export function Dropdown<T extends string>({ label, value, options, onChange, pl
 	const triggerRef = useRef<View>(null);
 	const selectedLabel = useMemo(() => options.find(o => o.value === value)?.label ?? placeholder ?? '', [options, value, placeholder]);
 	const theme = useAppSelector((s: RootState) => s.theme.current);
-
-	const textClass = theme === 'black' ? 'text-white' : theme === 'blue' ? 'text-blue-950' : 'text-black';
-	const bgClass = theme === 'black' ? 'bg-black' : theme === 'blue' ? 'bg-blue-50' : 'bg-white';
-	const borderClass = theme === 'black' ? 'border-gray-700' : theme === 'blue' ? 'border-blue-200' : 'border-slate-300/60';
+	const tokens = getThemeTokens(theme);
 
 	const toggleOpen = () => {
 		if (!open) {
@@ -41,14 +39,14 @@ export function Dropdown<T extends string>({ label, value, options, onChange, pl
 
 	return (
 		<View className={compact ? '' : 'w-full'}>
-			{showLabel ? <Text className={`text-sm font-medium ${textClass} mb-1.5`}>{label}</Text> : null}
+			{showLabel ? <Text className={`text-sm font-medium ${tokens.textClass} mb-1.5`}>{label}</Text> : null}
 			<Pressable
 				ref={triggerRef}
-				className={`flex-row items-center justify-between rounded-xl border ${borderClass} ${bgClass} shadow-sm active:opacity-80 ${compact ? 'px-3 py-2 min-w-[140px]' : 'px-4 py-3'}`}
+				className={`flex-row items-center justify-between rounded-xl border ${tokens.borderClass} ${tokens.bgClass} shadow-sm active:opacity-80 ${compact ? 'px-3 py-2 min-w-[140px]' : 'px-4 py-3'}`}
 				onPress={toggleOpen}
 			>
-				<Text className={`${textClass} ${compact ? 'text-sm' : 'text-base'}`}>{selectedLabel}</Text>
-				<Text className={`${textClass} ${compact ? 'text-xs' : 'text-sm'}`}>{open ? '˄' : '˅'}</Text>
+				<Text className={`${tokens.textClass} ${compact ? 'text-sm' : 'text-base'}`}>{selectedLabel}</Text>
+				<Text className={`${tokens.textClass} ${compact ? 'text-xs' : 'text-sm'}`}>{open ? '˄' : '˅'}</Text>
 			</Pressable>
 
 			<Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
@@ -56,7 +54,7 @@ export function Dropdown<T extends string>({ label, value, options, onChange, pl
 				<Pressable style={{ position: 'absolute', inset: 0 }} onPress={() => setOpen(false)} />
 				<View
 					style={{ position: 'absolute', top: anchor.y + anchor.h + 8, left: anchor.x, width: Math.max(180, anchor.w) }}
-					className={`rounded-xl border ${borderClass} ${bgClass} shadow-lg overflow-hidden`}
+					className={`rounded-xl border ${tokens.borderClass} ${tokens.bgClass} shadow-lg overflow-hidden`}
 				>
 					<ScrollView className="max-h-60">
 						{options.map(o => {
@@ -70,8 +68,8 @@ export function Dropdown<T extends string>({ label, value, options, onChange, pl
 										setOpen(false);
 									}}
 								>
-									<Text className={`${compact ? 'text-sm' : 'text-base'} ${isSelected ? 'font-semibold' : ''} ${textClass}`}>{o.label}</Text>
-									{isSelected ? <Text className={`${textClass} ${compact ? 'text-xs' : 'text-sm'}`}>✓</Text> : null}
+									<Text className={`${compact ? 'text-sm' : 'text-base'} ${isSelected ? 'font-semibold' : ''} ${tokens.textClass}`}>{o.label}</Text>
+									{isSelected ? <Text className={`${tokens.textClass} ${compact ? 'text-xs' : 'text-sm'}`}>✓</Text> : null}
 								</Pressable>
 							);
 						})}
