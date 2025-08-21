@@ -6,7 +6,14 @@ module.exports = {
 	],
 	presets: [require('nativewind/preset')],
 	theme: {
-		extend: {},
+		extend: {
+			fontFamily: {
+				'regular': ['Satoshi-Regular'],
+				'medium': ['Satoshi-Medium'],
+				'semibold': ['Satoshi-Semibold'],
+				'bold': ['Satoshi-Bold'],
+			},
+		},
 	},
 	plugins: [],
 };

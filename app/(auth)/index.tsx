@@ -1,122 +1,89 @@
-// import { Ionicons } from "@expo/vector-icons";
-// import { router } from "expo-router";
-// import { useTranslation } from "react-i18next";
-// import { Image, Pressable, Text, View } from "react-native";
-// import type { RootState } from "../../src/state/store";
-// import { useAppSelector } from "../../src/state/useStoreHooks";
-// import { getThemeTokens } from "../../src/theme/tokens";
-
-// export default function WelcomeScreen() {
-//   const { t } = useTranslation();
-//   const theme = useAppSelector((s: RootState) => s.theme.current);
-//   const tokens = getThemeTokens(theme);
-//   return (
-//     <View className={`flex-1 ${tokens.bgClass}`}>
-
- 
-//       <View className="flex-1 items-center p-12 mt-20 justify-between">
-//         {/* Brand Image */}
-
-//         <Image
-//           source={require("../../assets/images/splash-icon.png")}
-//           className="w-full max-w-[258px] h-auto"
-//           resizeMode="contain"
-//         />
-
-
-//         {/* Headline */}
-//         <View>
-//           <Text className="text-2xl font-semibold text-slate-800 mb-2">Less stress. More life.</Text>
-//           <Text className="text-base text-slate-500 text-center mb-12 w-11/12">
-//             Manage your task, time, and{"\n"}talk right here.
-//           </Text>
-//         </View>
-
-
-//         <View>
-//           {/* Google Button */}
-//           <Pressable
-//             onPress={() => router.replace("/(main)/(drawer)")}
-//             className="flex-row items-center justify-center w-full max-w-[560px] h-14 rounded-2xl bg-white shadow-md border border-slate-200"
-//           >
-//             <Ionicons name="logo-google" size={20} color="#EA4335" />
-//             <Text className="ml-3 text-slate-700 text-base font-medium">Continue with Google</Text>
-//           </Pressable>
-
-//           {/* Watch demo */}
-//           <View className="mt-6">
-//             <Pressable className="flex-row items-center">
-//               <Ionicons name="play-circle-outline" size={18} color={tokens.palette?.primary ?? '#335DCC'} />
-//               <Text className="ml-2" style={{ color: tokens.palette?.primary ?? '#335DCC' }}>Watch How It Works (30 sec)</Text>
-//             </Pressable>
-//           </View>
-//         </View>
-
-
-
-//         {/* Terms */}
-//         <View className="w-full items-center">
-//           <Text className="text-slate-400 text-sm mb-2">By Continuing,</Text>
-//           <Text className="text-slate-400 text-sm">
-//             You Agree To <Text className="text-[#335DCC]">Our Terms</Text> And <Text className="text-[#335DCC]">Privacy Policy</Text>
-//           </Text>
-//         </View>
-//       </View>
-//     </View>
-//   );
-// }
-
-
-
+import { AppleIcon, GoogleIcon } from "@/assets/icons/Icons";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import type { RootState } from "../../src/state/store";
 import { useAppSelector } from "../../src/state/useStoreHooks";
-import { getThemeTokens } from "../../src/theme/tokens";
+import { ThemeTokens, getThemeTokens } from "../../src/theme/tokens";
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const theme = useAppSelector((s: RootState) => s.theme.current);
-  const tokens = getThemeTokens(theme);
+  const themeColors = getThemeTokens(theme);
+  const { height } = Dimensions.get("window");
+  const topMargin = 0.15;
+  // Create styles with current theme tokens
+  const styles = createWelcomeStyles(themeColors);
 
   return (
-    <View className={`flex-1 ${tokens.bgClass}`}>
-      {/* ScrollView helps on smaller screens */}
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        className="flex-1"
-      >
-        <View className="flex-1 items-center mt-10 justify-between px-6 py-12 md:px-12 lg:px-24">
-          
+    <View className="flex-1" style={styles.container}>
+      <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }} className="flex-1">
+        <View
+          className="flex-1 items-center justify-between p-12"
+           style={{ marginTop: height * topMargin }}
+        >
           {/* Brand Image */}
           <Image
             source={require("../../assets/images/splash-icon.png")}
-            className="w-full max-w-[258px] h-auto"
+            style={{ width: 258, height: 70 }}
             resizeMode="contain"
           />
 
           {/* Headline */}
-          <View className="mt-10 items-center">
-            <Text className="text-2xl md:text-3xl font-semibold text-slate-800 text-center mb-2">
+          <View className="mt-10 items-center gap-2">
+            <Text
+              className="text-[26px] font-bold text-center"
+              style={styles.text}
+            >
               Less stress. More life.
             </Text>
-            <Text className="text-base md:text-lg text-slate-500 text-center mb-12 max-w-[400px]">
+            <Text
+              className="text-[16px] font-medium text-center max-w-[400px]"
+              style={styles.text}
+            >
               Manage your task, time, and {"\n"} talk right here.
             </Text>
           </View>
 
-          {/* Google Button + Demo */}
-          <View className="w-full items-center">
+          {/* Google + Apple Buttons + Demo */}
+          <View className="w-full items-center gap-5">
             {/* Google Button */}
             <Pressable
               onPress={() => router.replace("/(main)/(drawer)")}
-              className="flex-row items-center justify-center w-full max-w-[560px] h-14 rounded-2xl bg-white shadow-md border border-slate-200"
+              className="flex-row items-center justify-center w-full max-w-[560px] py-4 rounded-[12px] border"
+              style={styles.button}
             >
-              <Ionicons name="logo-google" size={20} color="#EA4335" />
-              <Text className="ml-3 text-slate-700 text-base font-medium">
+              <GoogleIcon />
+              <Text
+                className="ml-3 text-base font-semibold text-[16px]"
+                style={styles.text}
+              >
                 Continue with Google
+              </Text>
+            </Pressable>
+
+            {/* Apple Button */}
+            <Pressable
+              onPress={() => router.replace("/(main)/(drawer)")}
+              className="flex-row items-center justify-center w-full max-w-[560px] py-4 rounded-[12px]"
+              style={[styles.button, styles.shadow]}
+            >
+              <AppleIcon />
+              <Text
+                className="ml-3 text-base font-semibold text-[16px]"
+                style={styles.text}
+              >
+                Continue with Apple
               </Text>
             </Pressable>
 
@@ -124,13 +91,13 @@ export default function WelcomeScreen() {
             <View className="mt-6">
               <Pressable className="flex-row items-center">
                 <Ionicons
-                  name="play-circle-outline"
-                  size={18}
-                  color={tokens.palette?.primary ?? "#335DCC"}
+                  name="play-outline"
+                  size={20}
+                  color={themeColors.primary}
                 />
                 <Text
-                  className="ml-2"
-                  style={{ color: tokens.palette?.primary ?? "#335DCC" }}
+                  className="ml-2 text-base font-semibold text-[15px]"
+                  style={styles.textPrimary}
                 >
                   Watch How It Works (30 sec)
                 </Text>
@@ -139,11 +106,19 @@ export default function WelcomeScreen() {
           </View>
 
           {/* Terms */}
-          <View className="mt-10 w-full items-center">
-            <Text className="text-slate-400 text-sm mb-2">By Continuing,</Text>
-            <Text className="text-slate-400 text-sm text-center px-4">
-              You Agree To <Text className="text-[#335DCC]">Our Terms</Text> And{" "}
-              <Text className="text-[#335DCC]">Privacy Policy</Text>
+          <View className="mt-10 w-full items-center gap-1">
+            <Text className="text-[14px] font-regular" style={styles.text}>
+              By Continuing,
+            </Text>
+            <Text className="text-[14px] text-center px-4" style={styles.text}>
+              You Agree To{" "}
+              <Text className="font-semibold" style={styles.textPrimary}>
+                Our Terms
+              </Text>{" "}
+              And{" "}
+              <Text className="font-semibold" style={styles.textPrimary}>
+                Privacy Policy
+              </Text>
             </Text>
           </View>
         </View>
@@ -151,3 +126,38 @@ export default function WelcomeScreen() {
     </View>
   );
 }
+
+export const createWelcomeStyles = (theme: ThemeTokens) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: theme.background,
+    },
+    text: {
+      color: theme.text,
+    },
+    textPrimary: {
+      color: theme.primary,
+    },
+    button: {
+      borderWidth: 1,
+      borderColor: theme.borderDark,
+    },
+    shadow: {
+     borderColor: theme.border,
+     backgroundColor: theme.white,
+      ...Platform.select({
+        ios: {
+          shadowColor: theme.shadowColor,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.08,  
+          shadowRadius: 2,  
+        },
+        android: {
+          elevation: 2, 
+        },
+        web: {
+          boxShadow: "0px 1px 3px rgba(0,0,0,0.12)",  
+        },
+      }),
+    },
+  });

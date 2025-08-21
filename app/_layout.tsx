@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
@@ -25,10 +26,20 @@ function RootContent() {
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const language = useAppSelector((s: RootState) => s.language.current);
   const tokens = getThemeTokens(theme);
+  const [fontsLoaded] = useFonts({
+    'Satoshi-Regular': require('../assets/fonts/Satoshi-Regular.ttf'),
+    'Satoshi-Medium': require('../assets/fonts/Satoshi-Medium.ttf'),
+    'Satoshi-Semibold': require('../assets/fonts/Satoshi-Bold.ttf'),
+    'Satoshi-Bold': require('../assets/fonts/Satoshi-Black.ttf'),
+  });
 
   useEffect(() => {
     i18n.changeLanguage(language);
   }, [language]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <View className={`flex-1 ${tokens.bgClass}`}>
