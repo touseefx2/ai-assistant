@@ -1,12 +1,17 @@
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
+import type { RootState } from "../../../src/state/store";
+import { useAppSelector } from "../../../src/state/useStoreHooks";
 
 export default function DashboardScreen() {
+  const theme = useAppSelector((s: RootState) => s.theme.current);
+  const { t } = useTranslation();
+
+  const rootThemeClass = theme === 'black' ? 'theme-black' : theme === 'blue' ? 'theme-blue' : 'theme-white';
+
   return (
-    <View className="flex-1 bg-white items-center justify-center gap-2">
-      <Text className="text-4xl text-black font-extrabold">Dashboard screen</Text>
-      {/* <Pressable onPress={() => router.replace("/(main)/(drawer)")}>
-        <Text style={styles.button}>Go to main</Text>
-      </Pressable> */}
+    <View className={`flex-1 ${rootThemeClass} bg-app items-center justify-center px-4`}>
+      <Text className={`text-3xl font-extrabold text-app`}>{t('dashboard')}</Text>
     </View>
   );
 }

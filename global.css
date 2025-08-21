@@ -2,4 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme variables */
+:root {
+	--bg: 255 255 255;
+	--fg: 0 0 0;
+}
+
+.theme-white {
+	--bg: 255 255 255; /* white */
+	--fg: 0 0 0; /* black */
+}
+
+.theme-black {
+	--bg: 0 0 0; /* black */
+	--fg: 255 255 255; /* white */
+}
+
+.theme-blue {
+	--bg: 239 246 255; /* blue-50 */
+	--fg: 23 37 84; /* blue-950 */
+}
+
+@layer utilities {
+	.bg-app { background-color: rgb(var(--bg)); }
+	.text-app { color: rgb(var(--fg)); }
+}
+
 
