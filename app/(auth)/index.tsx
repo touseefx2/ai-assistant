@@ -1,7 +1,14 @@
-import { AppleIcon, GoogleIcon } from "@/assets/icons/Icons";
+import {
+  AppleIcon,
+  BubbleIcon,
+  CalendarIcon,
+  ChecklistIcon,
+  GoogleIcon,
+  UserGearIcon,
+} from "@/assets/icons/Icons";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import {
   Dimensions,
   Image,
@@ -10,53 +17,88 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
 import type { RootState } from "../../src/state/store";
 import { useAppSelector } from "../../src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "../../src/theme/tokens";
 
 export default function WelcomeScreen() {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const themeColors = getThemeTokens(theme);
   const { height } = Dimensions.get("window");
   const topMargin = 0.15;
-  // Create styles with current theme tokens
   const styles = createWelcomeStyles(themeColors);
 
   return (
     <View className="flex-1" style={styles.container}>
-      <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }} className="flex-1">
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+        className="flex-1"
+      >
         <View
-          className="flex-1 items-center justify-between p-12"
-           style={{ marginTop: height * topMargin }}
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            position: "absolute",
+            width: "100%",
+            top: height * topMargin - 20,
+          }}
+        >
+          <BubbleIcon />
+          <ChecklistIcon
+            style={{  right: 20, bottom: 25 }}
+          />
+        </View>
+
+        <View
+          className="flex-1 items-center justify-between py-12"
+          style={{ marginTop: height * topMargin }}
         >
           {/* Brand Image */}
           <Image
             source={require("../../assets/images/splash-icon.png")}
             style={{ width: 258, height: 70 }}
             resizeMode="contain"
+            className="px-12"
           />
 
           {/* Headline */}
           <View className="mt-10 items-center gap-2">
             <Text
-              className="text-[26px] font-bold text-center"
+              className="text-[26px] font-bold text-center px-12"
               style={styles.text}
             >
               Less stress. More life.
             </Text>
             <Text
-              className="text-[16px] font-medium text-center max-w-[400px]"
+              className="text-[16px] font-medium text-center max-w-[400px]  px-12"
               style={styles.text}
             >
               Manage your task, time, and {"\n"} talk right here.
             </Text>
+
+            <View
+              className="w-full"
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                position: "absolute",
+                width: "100%",
+                bottom: 0,
+              }}
+            >
+              <UserGearIcon />
+              <CalendarIcon
+              style={{  top:25 }}
+              />
+            </View>
           </View>
 
           {/* Google + Apple Buttons + Demo */}
-          <View className="w-full items-center gap-5">
+          <View className="w-full items-center gap-5 px-12">
             {/* Google Button */}
             <Pressable
               onPress={() => router.replace("/(main)/(drawer)")}
@@ -106,7 +148,7 @@ export default function WelcomeScreen() {
           </View>
 
           {/* Terms */}
-          <View className="mt-10 w-full items-center gap-1">
+          <View className="mt-10 w-full items-center gap-1 px-12">
             <Text className="text-[14px] font-regular" style={styles.text}>
               By Continuing,
             </Text>
@@ -143,20 +185,20 @@ export const createWelcomeStyles = (theme: ThemeTokens) =>
       borderColor: theme.borderDark,
     },
     shadow: {
-     borderColor: theme.border,
-     backgroundColor: theme.white,
+      borderColor: theme.border,
+      backgroundColor: theme.white,
       ...Platform.select({
         ios: {
           shadowColor: theme.shadowColor,
           shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.08,  
-          shadowRadius: 2,  
+          shadowOpacity: 0.08,
+          shadowRadius: 2,
         },
         android: {
-          elevation: 2, 
+          elevation: 2,
         },
         web: {
-          boxShadow: "0px 1px 3px rgba(0,0,0,0.12)",  
+          boxShadow: "0px 1px 3px rgba(0,0,0,0.12)",
         },
       }),
     },
