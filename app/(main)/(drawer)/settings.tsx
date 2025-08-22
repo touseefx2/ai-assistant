@@ -15,11 +15,14 @@ export default function SettingScreen() {
   const tokens = getThemeTokens(theme);
 
   return (
-    <View className={`flex-1 ${tokens.bgClass}`}>
-      {/* Compact dropdowns top-right under header */}
+    <View 
+    style={{backgroundColor:tokens.background}}
+    className={`flex-1`}>
       <View className="relative z-50 overflow-visible flex-row justify-end gap-4 px-4 pt-3">
         <View className="min-w-[160px]">
-          <Text className={`${tokens.mutedTextClass} text-xs mb-1 text-right`}>{t('changeLanguage')}</Text>
+          <Text
+          style={{color:tokens.text}}
+          className={`text-xs mb-1 text-right`}>{t('changeLanguage')}</Text>
           <Dropdown
             label={t('changeLanguage')}
             value={language}
@@ -30,7 +33,9 @@ export default function SettingScreen() {
           />
         </View>
         <View className="min-w-[160px]">
-          <Text className={`${tokens.mutedTextClass} text-xs mb-1 text-right`}>{t('currentTheme')}</Text>
+          <Text 
+          style={{color:tokens.text}}
+          className={`text-xs mb-1 text-right`}>{t('currentTheme')}</Text>
           <Dropdown
             label={t('currentTheme')}
             value={theme}
@@ -44,7 +49,9 @@ export default function SettingScreen() {
 
       {/* Content */}
       <View className="flex-1 z-0 items-center justify-center px-4">
-        <Text className={`text-3xl font-extrabold ${tokens.textClass}`}>{t('settings')}</Text>
+        <Text 
+        style={{color:tokens.text}}
+        className={`text-3xl font-extrabold`}>{t('settings')}</Text>
       </View>
     </View>
   );

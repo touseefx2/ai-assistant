@@ -6,9 +6,10 @@ import {
   GoogleIcon,
   UserGearIcon,
 } from "@/assets/icons/Icons";
+import VideoModal from "@/components/VideoModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   Image,
@@ -24,12 +25,14 @@ import { useAppSelector } from "../../src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "../../src/theme/tokens";
 
 export default function WelcomeScreen() {
-  // const { t } = useTranslation();
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const themeColors = getThemeTokens(theme);
   const { height } = Dimensions.get("window");
   const topMargin = 0.15;
   const styles = createWelcomeStyles(themeColors);
+
+  // Video modal state
+  const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
 
   return (
     <View className="flex-1" style={styles.container}>
@@ -68,7 +71,7 @@ export default function WelcomeScreen() {
               Less stress. More life.
             </Text>
             <Text
-              className="text-[16px] font-medium text-center max-w-[400px]  px-12"
+              className="text-[16px] font-medium text-center max-w-[400px] px-12"
               style={styles.text}
             >
               Manage your task, time, and {"\n"} talk right here.
@@ -100,23 +103,28 @@ export default function WelcomeScreen() {
             </Pressable>
 
             {/* Apple Button */}
-            <Pressable
-              onPress={() => router.replace("/(main)/(drawer)")}
-              className="flex-row items-center justify-center w-full max-w-[560px] py-4 rounded-[12px]"
-              style={[styles.button, styles.shadow]}
-            >
-              <AppleIcon />
-              <Text
-                className="ml-3 text-base font-semibold text-[16px]"
-                style={styles.text}
+            {(Platform.OS === "ios" || Platform.OS === "web") && (
+              <Pressable
+                onPress={() => router.replace("/(main)/(drawer)")}
+                className="flex-row items-center justify-center w-full max-w-[560px] py-4 rounded-[12px]"
+                style={[styles.button, styles.shadow]}
               >
-                Continue with Apple
-              </Text>
-            </Pressable>
+                <AppleIcon />
+                <Text
+                  className="ml-3 text-base font-semibold text-[16px]"
+                  style={styles.text}
+                >
+                  Continue with Apple
+                </Text>
+              </Pressable>
+            )}
 
             {/* Watch Demo */}
             <View className="mt-6">
-              <Pressable className="flex-row items-center">
+              <Pressable
+                className="flex-row items-center"
+                onPress={() => setIsVideoModalVisible(true)}
+              >
                 <Ionicons
                   name="play-outline"
                   size={20}
@@ -150,6 +158,13 @@ export default function WelcomeScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Video Modal */}
+      <VideoModal
+        isVisible={isVideoModalVisible}
+        onClose={() => setIsVideoModalVisible(false)}
+        themeColors={themeColors}
+      />
     </View>
   );
 }
