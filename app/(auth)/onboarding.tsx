@@ -36,36 +36,45 @@ export default function Onboarding() {
       className="flex-1 items-center justify-between py-12 px-6"
       style={styles.container}
     >
-      {/* Progress Bar */}
-      <View className="flex-row items-center justify-between w-full">
-        {/* Bars */}
-        <View className="flex-1 flex-row mr-3">
-          {[1, 2, 3].map((i) => (
-            <View
-              key={i}
-              style={[
-                styles.bar,
-                {
-                  backgroundColor:
-                    i === step ? themeColors.primary : themeColors.primaryLight,
-                },
-              ]}
-            />
-          ))}
+      {/* Responsive Container for all content */}
+      <View 
+        className="flex-1 justify-between"
+        style={{
+          width: '100%',
+          maxWidth: 448, // 28rem in pixels (md breakpoint)
+          alignSelf: 'center'
+        }}
+      >
+        {/* Progress Bar */}
+        <View className="flex-row items-center justify-between w-full">
+          {/* Bars */}
+          <View className="flex-1 flex-row mr-3">
+            {[1, 2, 3].map((i) => (
+              <View
+                key={i}
+                style={[
+                  styles.bar,
+                  {
+                    backgroundColor:
+                      i === step ? themeColors.primary : themeColors.primaryLight,
+                  },
+                ]}
+              />
+            ))}
+          </View>
+
+          {/* Step Text */}
+          <Text
+            className="font-semibold"
+            style={styles.stepText}
+          >{`${step} of 3`}</Text>
         </View>
 
-        {/* Step Text */}
-        <Text
-          className="font-semibold"
-          style={styles.stepText}
-        >{`${step} of 3`}</Text>
-      </View>
+        {/* Current Step */}
+        <View className="flex-1 w-full">{renderStep()}</View>
 
-      {/* Current Step */}
-      <View className="flex-1 w-full">{renderStep()}</View>
-
-      {/* Footer Buttons */}
-      <View className="w-full justify-between mt-5  gap-4">
+        {/* Footer Buttons */}
+        <View className="w-full justify-between mt-5 gap-4">
         <Pressable
           className="py-4 px-6 rounded-xl"
           style={styles.primaryBtn}
@@ -79,18 +88,19 @@ export default function Onboarding() {
           </Text>
         </Pressable>
 
-        <Pressable
-          className="py-4 px-6 rounded-xl border-2"
-          style={styles.primaryBtn2}
-          onPress={() => setStep(3)}
-        >
-          <Text
-            className="font-semibold  text-center"
-            style={styles.primaryBtnText2}
+          <Pressable
+            className="py-4 px-6 rounded-xl border-2"
+            style={styles.primaryBtn2}
+            onPress={() => setStep(3)}
           >
-            Skip
-          </Text>
-        </Pressable>
+            <Text
+              className="font-semibold  text-center"
+              style={styles.primaryBtnText2}
+            >
+              Skip
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );

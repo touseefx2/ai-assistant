@@ -56,40 +56,40 @@ export default function OnboardingStep1() {
 
   return (
     <View className="flex-1">
-      {/* Header */}
-      <View className="gap-2 mt-10">
-        <Text className="font-semibold" style={styles.title}>
-          How I can help you
-        </Text>
-        <Text className="font-medium" style={styles.subtitle}>
-          Choose one or more options to get started with tasks, calendar, or
-          communication.
-        </Text>
-      </View>
+        {/* Header */}
+        <View className="gap-2 mt-10">
+          <Text className="font-semibold" style={styles.title}>
+            How I can help you
+          </Text>
+          <Text className="font-medium" style={styles.subtitle}>
+            Choose one or more options to get started with tasks, calendar, or
+            communication.
+          </Text>
+        </View>
 
-      {data.length > 0 && (
-        <ScrollView showsVerticalScrollIndicator={false} className="mt-10">
-          {data.map((item) => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={{
-                marginBottom: 14,
-                borderColor: item.isSel
-                  ? themeColors.primary
-                  : themeColors.borderCheckBox,
-                borderWidth: 1.5,
-                backgroundColor: item.isSel ? "#F4F5FB" : "transparent",
-              }}
-              onPress={() => {
-                setData((prev) =>
-                  prev.map((el) =>
-                    el.id === item.id ? { ...el, isSel: !el.isSel } : el
-                  )
-                );
-              }}
-              key={item.id}
-              className="flex-row justify-between p-5 rounded-xl border gap-4 "
-            >
+        {data.length > 0 && (
+          <ScrollView showsVerticalScrollIndicator={false} className="mt-5">
+            {data.map((item) => (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={{
+                  marginBottom: 14,
+                  borderColor: item.isSel
+                    ? themeColors.primary
+                    : themeColors.borderCheckBox,
+                  borderWidth: 1.5,
+                  backgroundColor: item.isSel ? "#F4F5FB" : "transparent",
+                }}
+                onPress={() => {
+                  setData((prev) =>
+                    prev.map((el) =>
+                      el.id === item.id ? { ...el, isSel: !el.isSel } : el
+                    )
+                  );
+                }}
+                key={item.id}
+                className="flex-row justify-between p-5 rounded-xl border gap-4"
+              >
               {/* Left Icon */}
               {item.icon}
               {/* Text content */}
@@ -131,10 +131,10 @@ export default function OnboardingStep1() {
                   />
                 )}
               </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
     </View>
   );
 }
