@@ -38,20 +38,14 @@ export default function WelcomeScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         className="flex-1"
       >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            position: "absolute",
-            width: "100%",
-            top: height * topMargin - 20,
-          }}
-        >
-          <BubbleIcon />
-          <ChecklistIcon
-            style={{  right: 20, bottom: 25 }}
-          />
-        </View>
+        {Platform.OS !== "web" && (
+          <View
+            style={[styles.headerIconsCon, { top: height * topMargin - 20 }]}
+          >
+            <BubbleIcon />
+            <ChecklistIcon style={{ right: 20, bottom: 25 }} />
+          </View>
+        )}
 
         <View
           className="flex-1 items-center justify-between py-12"
@@ -80,21 +74,12 @@ export default function WelcomeScreen() {
               Manage your task, time, and {"\n"} talk right here.
             </Text>
 
-            <View
-              className="w-full"
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                position: "absolute",
-                width: "100%",
-                bottom: 0,
-              }}
-            >
-              <UserGearIcon />
-              <CalendarIcon
-              style={{  top:25 }}
-              />
-            </View>
+            {Platform.OS !== "web" && (
+              <View style={styles.footerIconsCon}>
+                <UserGearIcon />
+                <CalendarIcon style={{ top: 25 }} />
+              </View>
+            )}
           </View>
 
           {/* Google + Apple Buttons + Demo */}
@@ -173,6 +158,19 @@ export const createWelcomeStyles = (theme: ThemeTokens) =>
   StyleSheet.create({
     container: {
       backgroundColor: theme.background,
+    },
+    headerIconsCon: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      position: "absolute",
+      width: "100%",
+    },
+    footerIconsCon: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      position: "absolute",
+      width: "100%",
+      bottom: 0,
     },
     text: {
       color: theme.text,
