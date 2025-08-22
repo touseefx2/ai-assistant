@@ -11,10 +11,11 @@ export default function AuthLayout() {
       initialRouteName="index"
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: tokens.headertBgHex },
+        contentStyle: { backgroundColor: tokens.background },
       }}
     >
       <Stack.Screen name="index" options={{ title: "Welcome" }} />
+      <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
     </Stack>
   );
 }

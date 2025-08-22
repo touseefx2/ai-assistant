@@ -89,7 +89,8 @@ export default function WelcomeScreen() {
           <View className="w-full items-center gap-5 px-12">
             {/* Google Button */}
             <Pressable
-              onPress={() => router.replace("/(main)/(drawer)")}
+             onPress={() => router.navigate("/onboarding")}
+              // onPress={() => router.replace("/(main)/(drawer)")}
               className="flex-row items-center justify-center w-full max-w-[560px] py-4 rounded-[12px] border"
               style={styles.button}
             >
