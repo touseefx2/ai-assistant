@@ -8,7 +8,7 @@ import type { RootState } from "@/src/state/store";
 import { useAppSelector } from "@/src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "@/src/theme/tokens";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -57,7 +57,7 @@ export default function OnboardingStep1() {
   return (
     <View className="flex-1">
         {/* Header */}
-        <View className="gap-2 mt-10">
+        <View className="gap-2 mt-5">
           <Text className="font-semibold" style={styles.title}>
             How I can help you
           </Text>

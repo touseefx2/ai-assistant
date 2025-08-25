@@ -3,7 +3,7 @@ import type { RootState } from "../../../src/state/store";
 import { useAppSelector } from "../../../src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "../../../src/theme/tokens";
 
-export default function DashboardScreen() {
+export default function TasksScreen() {
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const tokens = getThemeTokens(theme);
   // const { t } = useTranslation();
@@ -15,7 +15,7 @@ export default function DashboardScreen() {
       style={styles.container}
     >
       <Text className={`text-3xl font-bold`} style={styles.title}>
-        Dashboard
+      Tasks
       </Text>
     </View>
   );
