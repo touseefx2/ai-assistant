@@ -261,15 +261,27 @@ export default function VoiceRecordingModal({
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
           playsInSilentModeIOS: true,
-          staysActiveInBackground: false,
+          staysActiveInBackground: true,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: false
         });
         if (!sound) {
-          const { sound: s } = await Audio.Sound.createAsync({ uri: playbackUri });
-          s.setOnPlaybackStatusUpdate((status: any) => {
-            if (status?.didJustFinish) setIsPlaying(false);
-          });
+          console.log("Loading sound from URI:", playbackUri);
+          const { sound: s } = await Audio.Sound.createAsync(
+            { uri: playbackUri },
+            { shouldPlay: true },
+            (status) => {
+              console.log("Playback status:", status);
+              if (status.isLoaded) {
+                if (status.didJustFinish) {
+                  setIsPlaying(false);
+                } else {
+                  setIsPlaying(status.isPlaying);
+                }
+              }
+            }
+          );
           setSound(s);
-          await s.playAsync();
         } else {
           await sound.playAsync();
         }
@@ -306,7 +318,12 @@ export default function VoiceRecordingModal({
         }
         webAudioRef.current = null;
       } else if (sound) {
-        try { await sound.unloadAsync(); } catch {}
+        try { 
+          await sound.stopAsync();
+          await sound.unloadAsync();
+        } catch (error) {
+          console.log("Error cleaning up sound:", error);
+        }
         setSound(null);
       }
     } finally {

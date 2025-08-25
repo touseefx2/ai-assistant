@@ -9,7 +9,7 @@ import {
 import VideoModal from "@/components/VideoModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dimensions,
   Image,
@@ -28,7 +28,7 @@ export default function WelcomeScreen() {
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const themeColors = getThemeTokens(theme);
   const { height } = Dimensions.get("window");
-  const topMargin = 0.15;
+  const topMargin = 0.2;
   const styles = createWelcomeStyles(themeColors);
 
   // Video modal state
