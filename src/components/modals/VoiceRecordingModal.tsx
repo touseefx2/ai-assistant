@@ -3,7 +3,7 @@ import { useAppSelector } from "@/src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "@/src/theme/tokens";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Modal,
   Platform,
@@ -48,10 +48,14 @@ export default function VoiceRecordingModal({
   const [recognizedText, setRecognizedText] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
+  const mediaRecorderRef = useRef<any>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const webChunksRef = useRef<Blob[]>([]);
+  const [fileToUpload, setFileToUpload] = useState<any | null>(null);
 
   // Generate waveform data during recording
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
 
     if (isRecording && !isPaused) {
       interval = setInterval(() => {
@@ -85,22 +89,123 @@ export default function VoiceRecordingModal({
     }
   }, [isVisible]);
 
-  const handleStartRecording = () => {
+  const startNativeRecording = async () => {
+    try {
+      if (!permissionResponse || permissionResponse.status !== "granted") {
+        await requestPermission();
+      }
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+      });
+
+      const result = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(result.recording);
+    } catch (e) {
+      console.log("Failed to start native recording", e);
+    }
+  };
+
+  const startWebRecording = async () => {
+    console.log("startWebRecording");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      webChunksRef.current = [];
+      mediaRecorder.ondataavailable = (evt: BlobEvent) => {
+        if (evt.data && evt.data.size > 0) webChunksRef.current.push(evt.data);
+      };
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(100);
+    } catch (e) {
+      console.log("Failed to start web recording", e);
+    }
+  };
+
+  const handleStartRecording = async () => {
     if (!isRecording) {
       setIsRecording(true);
       setIsPaused(false);
       setWaveformData([]);
       setRecordingTime(0);
+      if (Platform.OS === "web") {
+        await startWebRecording();
+      } else {
+        await startNativeRecording();
+      }
     } else {
       // Pause/Resume recording
-      setIsPaused(!isPaused);
+      try {
+        if (Platform.OS === "web") {
+          const mr: any = mediaRecorderRef.current;
+          if (!mr) return;
+          if (!isPaused) {
+            mr.pause?.();
+          } else {
+            mr.resume?.();
+          }
+        } else {
+          if (recording) {
+            if (!isPaused) {
+              // @ts-ignore - pauseAsync may not exist on some SDKs
+              await (recording as any).pauseAsync?.();
+            } else {
+              // @ts-ignore - resume/start may differ by SDK
+              if ((recording as any).startAsync) await (recording as any).startAsync();
+              else if ((recording as any).resumeAsync) await (recording as any).resumeAsync();
+            }
+          }
+        }
+        setIsPaused(!isPaused);
+      } catch (e) {
+        console.log("Pause/Resume failed", e);
+      }
     }
   };
 
-  const handleStopRecording = () => {
-    setIsRecording(false);
-    setIsPaused(false);
-    setHasRecording(true);
+  const handleStopRecording = async () => {
+    try {
+      if (Platform.OS === "web") {
+        const mr: any = mediaRecorderRef.current;
+        if (mr && mr.state !== "inactive") {
+          await new Promise<void>((resolve) => {
+            mr.onstop = () => resolve();
+            mr.stop();
+          });
+        }
+        mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+        mediaStreamRef.current = null;
+        const blob = new Blob(webChunksRef.current, { type: "audio/webm" });
+        const file = new File([blob], "recording.webm", { type: "audio/webm" });
+        setFileToUpload(file);
+      } else if (recording) {
+        try {
+          await recording.stopAndUnloadAsync();
+        } catch (e) {
+          // ignore if already stopped
+        }
+        const uri = recording.getURI();
+        if (uri) {
+          const file: any = {
+            uri,
+            name: "recording.m4a",
+            type: "audio/m4a",
+          };
+          setFileToUpload(file);
+        }
+      }
+    } catch (e) {
+      console.log("Stop recording failed", e);
+    } finally {
+      setIsRecording(false);
+      setIsPaused(false);
+      setHasRecording(true);
+    }
   };
 
   const handleCancel = () => {
@@ -112,19 +217,25 @@ export default function VoiceRecordingModal({
     onClose();
   };
 
-  const handleSend = () => {
-    if (hasRecording || waveformData.length > 0) {
-      // Simulate converting audio to text
-      const audioText = "You can call me Steve Smith!";
-      onSendRecording(audioText);
-      // Reset and close
-      setIsRecording(false);
-      setIsPaused(false);
-      setWaveformData([]);
-      setRecordingTime(0);
-      setHasRecording(false);
-      onClose();
-    }
+  const handleSend = async () => {
+    if (!fileToUpload) return;
+    console.log("--->fileToUpload", fileToUpload);
+    // try {
+    //   const text = await transcribeAudio(fileToUpload);
+    //   setRecognizedText(text);
+    //   onSendRecording(text);
+    // } catch (e: any) {
+    //   console.log("Transcription error", e);
+    //   onSendRecording("");
+    // } finally {
+    //   setIsRecording(false);
+    //   setIsPaused(false);
+    //   setWaveformData([]);
+    //   setRecordingTime(0);
+    //   setHasRecording(false);
+    //   setFileToUpload(null);
+    //   onClose();
+    // }
   };
 
   const formatTime = (seconds: number) => {
