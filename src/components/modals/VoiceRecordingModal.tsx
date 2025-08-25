@@ -53,6 +53,20 @@ export default function VoiceRecordingModal({
   const webChunksRef = useRef<Blob[]>([]);
   const [fileToUpload, setFileToUpload] = useState<any | null>(null);
 
+  // Playback state
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackUri, setPlaybackUri] = useState<string | null>(null);
+  const webAudioRef = useRef<any>(null);
+  const webMimeTypeRef = useRef<string>("audio/webm");
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cleanupPlayback();
+    };
+  }, []);
+
   // Generate waveform data during recording
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -115,7 +129,17 @@ export default function VoiceRecordingModal({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStreamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+
+      // Prefer MP3 if supported, otherwise fallback to webm
+      let mime = "audio/webm";
+      try {
+        if (typeof MediaRecorder !== "undefined" && (MediaRecorder as any).isTypeSupported?.("audio/mpeg")) {
+          mime = "audio/mpeg";
+        }
+      } catch {}
+      webMimeTypeRef.current = mime;
+
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: mime });
       webChunksRef.current = [];
       mediaRecorder.ondataavailable = (evt: BlobEvent) => {
         if (evt.data && evt.data.size > 0) webChunksRef.current.push(evt.data);
@@ -180,9 +204,19 @@ export default function VoiceRecordingModal({
         }
         mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
         mediaStreamRef.current = null;
-        const blob = new Blob(webChunksRef.current, { type: "audio/webm" });
-        const file = new File([blob], "recording.webm", { type: "audio/webm" });
+
+        const type = webMimeTypeRef.current || "audio/webm";
+        const ext = type === "audio/mpeg" ? "mp3" : "webm";
+        const blob = new Blob(webChunksRef.current, { type });
+        const file = new File([blob], `recording.${ext}`, { type });
         setFileToUpload(file);
+
+        const url = URL.createObjectURL(blob);
+        setPlaybackUri(url);
+        try {
+          webAudioRef.current = new Audio(url);
+          webAudioRef.current.onended = () => setIsPlaying(false);
+        } catch {}
       } else if (recording) {
         try {
           await recording.stopAndUnloadAsync();
@@ -197,6 +231,7 @@ export default function VoiceRecordingModal({
             type: "audio/m4a",
           };
           setFileToUpload(file);
+          setPlaybackUri(uri);
         }
       }
     } catch (e) {
@@ -208,12 +243,85 @@ export default function VoiceRecordingModal({
     }
   };
 
+   
+  const handlePlayPlayback = async () => {
+    if (!playbackUri) return;
+    try {
+      if (Platform.OS === "web") {
+        let el = webAudioRef.current;
+        if (!el) {
+          el = new window.Audio(playbackUri);
+          el.onended = () => setIsPlaying(false);
+          webAudioRef.current = el;
+        }
+        await el.play();
+        setIsPlaying(true);
+      } else {
+        // Native platforms use expo-av
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          playsInSilentModeIOS: true,
+          staysActiveInBackground: false,
+        });
+        if (!sound) {
+          const { sound: s } = await Audio.Sound.createAsync({ uri: playbackUri });
+          s.setOnPlaybackStatusUpdate((status: any) => {
+            if (status?.didJustFinish) setIsPlaying(false);
+          });
+          setSound(s);
+          await s.playAsync();
+        } else {
+          await sound.playAsync();
+        }
+        setIsPlaying(true);
+      }
+    } catch (e) {
+      console.log("Play failed", e);
+    }
+  };
+
+  const handlePausePlayback = async () => {
+    try {
+      if (Platform.OS === "web") {
+        webAudioRef.current?.pause?.();
+        setIsPlaying(false);
+      } else if (sound) {
+        await sound.pauseAsync();
+        setIsPlaying(false);
+      }
+    } catch (e) {
+      console.log("Pause failed", e);
+    }
+  };
+
+  const cleanupPlayback = async () => {
+    try {
+      if (Platform.OS === "web") {
+        if (webAudioRef.current) {
+          try { webAudioRef.current.pause(); } catch {}
+          try { webAudioRef.current.src = ""; } catch {}
+        }
+        if (playbackUri) {
+          try { URL.revokeObjectURL(playbackUri); } catch {}
+        }
+        webAudioRef.current = null;
+      } else if (sound) {
+        try { await sound.unloadAsync(); } catch {}
+        setSound(null);
+      }
+    } finally {
+      setIsPlaying(false);
+      setPlaybackUri(null);
+    }
+  };
+
   const handleCancel = () => {
     setIsRecording(false);
     setIsPaused(false);
     setWaveformData([]);
     setRecordingTime(0);
     setHasRecording(false);
+    cleanupPlayback();
     onClose();
   };
 
@@ -343,6 +451,20 @@ export default function VoiceRecordingModal({
           {isRecording && (
             <Pressable style={styles.stopButton} onPress={handleStopRecording}>
               <Ionicons name="stop" size={28} color={themeColors.white} />
+            </Pressable>
+          )}
+
+          {/* Playback Button (after recording) */}
+          {hasRecording && (
+            <Pressable
+              style={styles.playButton}
+              onPress={isPlaying ? handlePausePlayback : handlePlayPlayback}
+            >
+              <Ionicons
+                name={isPlaying ? "pause" : "play"}
+                size={28}
+                color={themeColors.white}
+              />
             </Pressable>
           )}
 
@@ -483,6 +605,14 @@ const createStyles = (theme: ThemeTokens) =>
       height: 56,
       borderRadius: 28,
       backgroundColor: "#666",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    playButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: "#1DB954",
       alignItems: "center",
       justifyContent: "center",
     },
