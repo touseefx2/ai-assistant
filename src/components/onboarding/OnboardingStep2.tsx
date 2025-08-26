@@ -4,19 +4,18 @@ import type { RootState } from "@/src/state/store";
 import { useAppSelector } from "@/src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "@/src/theme/tokens";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  FlatList,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import SuccessModal from "../modals/SuccessModal";
 
@@ -37,6 +36,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
   const [showInput, setShowInput] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
   const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
 
   // Initialize with bot message
   useEffect(() => {
@@ -53,6 +53,15 @@ export default function OnboardingStep2({ messages, setMessages }) {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messages.length > 0 && flatListRef.current) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
 
   const handleChatIconPress = () => {
     setShowInput(true);
@@ -146,7 +155,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        {/* <TouchableWithoutFeedback  onPress={Keyboard.dismiss}> */}
           <View style={{ flex: 1 }}>
             {/* Header */}
             <View className="mt-5">
@@ -158,67 +167,68 @@ export default function OnboardingStep2({ messages, setMessages }) {
             </View>
 
             {/* Chat Area */}
-            <ScrollView
-              className="flex-1"
-              style={{ marginTop: 40 }}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow:1, paddingBottom: 20 }}
-              keyboardShouldPersistTaps="handled"
-              automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
-            >
-              <View className="gap-4 px-2">
-                {messages.map((message: ChatMessage) => (
-                  <View key={message.id}>
-                    <View
-                      className={`flex-row items-start gap-3 ${
-                        message.isBot ? "" : "justify-end"
-                      }`}
-                    >
-                      {message.isBot && (
-                        <View style={styles.avatar}>
-                          <Text style={styles.avatarText}>LN</Text>
-                        </View>
-                      )}
-
-                      <View
-                        style={[
-                          styles.bubble,
-                          message.isBot ? styles.botBubble : styles.userBubble,
-                        ]}
-                      >
-                        <Text
-                          style={
-                            message.isBot
-                              ? styles.botBubbleText
-                              : styles.userBubbleText
-                          }
-                        >
-                          {message.text}
-                        </Text>
-                        <Text style={styles.timestamp}>
-                          {message.timestamp}
-                        </Text>
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item: message }) => (
+                <View style={styles.messageWrapper}>
+                  <View
+                    className={`flex-row items-start gap-3 ${
+                      message.isBot ? "" : "justify-end"
+                    }`}
+                  >
+                    {message.isBot && (
+                      <View style={styles.avatar}>
+                        <Text style={styles.avatarText}>LN</Text>
                       </View>
+                    )}
 
-                      {!message.isBot && (
-                        <View style={[styles.avatar, styles.userAvatar]}>
-                          <Text style={styles.avatarText}>
-                            {getInitials(message.text, false)}
-                          </Text>
-                        </View>
-                      )}
+                    <View
+                      style={[
+                        styles.bubble,
+                        message.isBot ? styles.botBubble : styles.userBubble,
+                      ]}
+                    >
+                      <Text
+                        style={
+                          message.isBot
+                            ? styles.botBubbleText
+                            : styles.userBubbleText
+                        }
+                      >
+                        {message.text}
+                      </Text>
+                      <Text style={styles.timestamp}>{message.timestamp}</Text>
                     </View>
 
-                    {/* Show suggestions below bot messages if they exist */}
-                    {message.isBot && message.suggestions && (
-                      <View style={styles.suggestionsWrapper}>
-                        <SuggestionButtons suggestions={message.suggestions} />
+                    {!message.isBot && (
+                      <View style={[styles.avatar, styles.userAvatar]}>
+                        <Text style={styles.avatarText}>
+                          {getInitials(message.text, false)}
+                        </Text>
                       </View>
                     )}
                   </View>
-                ))}
-              </View>
-            </ScrollView>
+
+                  {/* Show suggestions below bot messages if they exist */}
+                  {message.isBot && message.suggestions && (
+                    <View style={styles.suggestionsWrapper}>
+                      <SuggestionButtons suggestions={message.suggestions} />
+                    </View>
+                  )}
+                </View>
+              )}
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={true}
+              keyboardShouldPersistTaps="handled"
+              removeClippedSubviews={false}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              initialNumToRender={10}
+              onEndReachedThreshold={0.5}
+            />
 
             {/* Bottom Area - Fixed height container */}
             <View style={styles.bottomArea}>
@@ -287,7 +297,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
               )}
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        {/* </TouchableWithoutFeedback> */}
       </KeyboardAvoidingView>
 
       <VoiceRecordingModal
@@ -373,6 +383,18 @@ const createStyles = (theme: ThemeTokens) =>
       paddingBottom: 20,
       paddingTop: 10,
       minHeight: 80,
+    },
+    scrollView: {
+      flex: 1,
+      marginTop: 40,
+    },
+    scrollContent: {
+      paddingBottom: 20,
+      paddingTop: 10,
+      flexGrow: 1,
+    },
+    messageWrapper: {
+      marginBottom: 15,
     },
     inputContainer: {
       borderWidth: 1,
