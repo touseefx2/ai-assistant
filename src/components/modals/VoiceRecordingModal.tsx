@@ -133,7 +133,10 @@ export default function VoiceRecordingModal({
       // Prefer MP3 if supported, otherwise fallback to webm
       let mime = "audio/webm";
       try {
-        if (typeof MediaRecorder !== "undefined" && (MediaRecorder as any).isTypeSupported?.("audio/mpeg")) {
+        if (
+          typeof MediaRecorder !== "undefined" &&
+          (MediaRecorder as any).isTypeSupported?.("audio/mpeg")
+        ) {
           mime = "audio/mpeg";
         }
       } catch {}
@@ -180,8 +183,10 @@ export default function VoiceRecordingModal({
               await (recording as any).pauseAsync?.();
             } else {
               // @ts-ignore - resume/start may differ by SDK
-              if ((recording as any).startAsync) await (recording as any).startAsync();
-              else if ((recording as any).resumeAsync) await (recording as any).resumeAsync();
+              if ((recording as any).startAsync)
+                await (recording as any).startAsync();
+              else if ((recording as any).resumeAsync)
+                await (recording as any).resumeAsync();
             }
           }
         }
@@ -243,7 +248,6 @@ export default function VoiceRecordingModal({
     }
   };
 
-   
   const handlePlayPlayback = async () => {
     if (!playbackUri) return;
     try {
@@ -263,32 +267,50 @@ export default function VoiceRecordingModal({
           playsInSilentModeIOS: true,
           staysActiveInBackground: true,
           shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false
+          playThroughEarpieceAndroid: false,
         });
-        if (!sound) {
-          console.log("Loading sound from URI:", playbackUri);
-          const { sound: s } = await Audio.Sound.createAsync(
-            { uri: playbackUri },
-            { shouldPlay: true },
-            (status) => {
-              console.log("Playback status:", status);
-              if (status.isLoaded) {
-                if (status.didJustFinish) {
-                  setIsPlaying(false);
-                } else {
-                  setIsPlaying(status.isPlaying);
+
+        // Unload previous sound if it exists
+        if (sound) {
+          console.log("Unloading previous sound");
+          await sound.unloadAsync();
+          setSound(null);
+        }
+
+        // Create and play new sound instance
+        console.log("Loading sound from URI:", playbackUri);
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          { uri: playbackUri },
+          { shouldPlay: true, progressUpdateIntervalMillis: 100 },
+          (status) => {
+            console.log("Playback status:", status);
+            if (status.isLoaded) {
+              if (status.didJustFinish) {
+                console.log("Playback finished");
+                setIsPlaying(false);
+                // Cleanup sound after it finishes
+                if (sound) {
+                  sound.unloadAsync().catch(console.error);
+                  setSound(null);
                 }
+              } else {
+                setIsPlaying(status.isPlaying);
               }
             }
-          );
-          setSound(s);
-        } else {
-          await sound.playAsync();
-        }
+          }
+        );
+
+        setSound(newSound);
         setIsPlaying(true);
       }
     } catch (e) {
       console.log("Play failed", e);
+      // Reset state on error
+      setIsPlaying(false);
+      if (sound) {
+        await sound.unloadAsync().catch(console.error);
+        setSound(null);
+      }
     }
   };
 
@@ -298,11 +320,16 @@ export default function VoiceRecordingModal({
         webAudioRef.current?.pause?.();
         setIsPlaying(false);
       } else if (sound) {
+        console.log("Pausing playback");
         await sound.pauseAsync();
-        setIsPlaying(false);
+        const status = await sound.getStatusAsync();
+        console.log("Pause status:", status);
+        setIsPlaying(status.isLoaded ? status.isPlaying : false);
       }
     } catch (e) {
       console.log("Pause failed", e);
+      // Reset state on error
+      setIsPlaying(false);
     }
   };
 
@@ -310,15 +337,21 @@ export default function VoiceRecordingModal({
     try {
       if (Platform.OS === "web") {
         if (webAudioRef.current) {
-          try { webAudioRef.current.pause(); } catch {}
-          try { webAudioRef.current.src = ""; } catch {}
+          try {
+            webAudioRef.current.pause();
+          } catch {}
+          try {
+            webAudioRef.current.src = "";
+          } catch {}
         }
         if (playbackUri) {
-          try { URL.revokeObjectURL(playbackUri); } catch {}
+          try {
+            URL.revokeObjectURL(playbackUri);
+          } catch {}
         }
         webAudioRef.current = null;
       } else if (sound) {
-        try { 
+        try {
           await sound.stopAsync();
           await sound.unloadAsync();
         } catch (error) {
@@ -345,6 +378,10 @@ export default function VoiceRecordingModal({
   const handleSend = async () => {
     if (!fileToUpload) return;
     console.log("--->fileToUpload", fileToUpload);
+    setRecognizedText("You can call me Steve Smith!");
+    onSendRecording("You can call me Steve Smith!");
+    onClose();
+
     // try {
     //   const text = await transcribeAudio(fileToUpload);
     //   setRecognizedText(text);

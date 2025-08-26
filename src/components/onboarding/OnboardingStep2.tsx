@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 import SuccessModal from "../modals/SuccessModal";
- 
+
 interface ChatMessage {
   id: number;
   text: string;
@@ -149,7 +149,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
         className="flex-1"
         style={{ marginTop: 40 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
       >
         <View className="gap-4 px-2">
           {messages.map((message) => (
@@ -204,16 +204,16 @@ export default function OnboardingStep2({ messages, setMessages }) {
       </ScrollView>
 
       {/* Input Area */}
-      {showInput && messages.length < 4 && (
-        <View className="px-4 pb-4 mt-4">
-          <View className="flex-row items-center gap-3">
+      {showInput && (
+        <View className="px-4">
+          <View className="flex-row items-center gap-5">
             <View
               className="flex-1 flex-row items-center"
               style={styles.inputContainer}
             >
               <TextInput
                 style={styles.textInput}
-                placeholder="Type your name..."
+                placeholder="Type your text..."
                 placeholderTextColor={themeColors.subText}
                 value={inputText}
                 onChangeText={setInputText}
@@ -229,7 +229,6 @@ export default function OnboardingStep2({ messages, setMessages }) {
                 </Pressable>
               )}
             </View>
-
             <Pressable style={styles.micButtonActive} onPress={handleMicPress}>
               <Ionicons name="mic" size={24} color={themeColors.white} />
             </Pressable>
@@ -239,20 +238,8 @@ export default function OnboardingStep2({ messages, setMessages }) {
 
       {/* Bottom Controls - Always show chat icon */}
       {!showInput && (
-        <View className="flex-row items-center justify-center gap-4 mt-8 pb-4">
+        <View className="flex-row items-center justify-center gap-5">
           <Pressable style={styles.iconButton} onPress={handleChatIconPress}>
-            <ChatIcon />
-          </Pressable>
-          <Pressable style={styles.iconButton} onPress={handleMicPress}>
-            <MicIcon />
-          </Pressable>
-        </View>
-      )}
-
-      {/* Bottom Controls (when chat is complete) */}
-      {messages.length >= 4 && (
-        <View className="flex-row items-center justify-center gap-4 mt-8 pb-4">
-          <Pressable style={styles.iconButton}>
             <ChatIcon />
           </Pressable>
           <Pressable style={styles.iconButton} onPress={handleMicPress}>
