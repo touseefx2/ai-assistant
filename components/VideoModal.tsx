@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   View
@@ -28,6 +29,11 @@ export default function VideoModal({
   const [isBuffering, setIsBuffering] = useState(true);
   const [showControls, setShowControls] = useState(true);
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  
+  // For web, we need to consider max dimensions to maintain aspect ratio
+  const isWeb = Platform.OS === 'web';
+  const maxWebWidth = 1200;
+  const maxWebHeight = 800;
 
   const videoUrl =
     "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4";
@@ -74,37 +80,28 @@ export default function VideoModal({
     setShowControls((prev) => !prev);
   };
 
-  const styles = createVideoStyles();
+  const styles = createVideoStyles(isWeb, screenWidth, screenHeight, maxWebWidth, maxWebHeight);
 
   return (
     <Modal
       visible={isVisible}
       animationType="fade"
-      // transparent={true}
-      presentationStyle="fullScreen"
+      transparent={!isWeb} // Use transparent for mobile, not for web
+      presentationStyle={isWeb ? "pageSheet" : "fullScreen"}
       onRequestClose={onClose}
     >
       <View style={[styles.container]}>
         {/* Video Container with Controls */}
         <Pressable
-          className="flex-1 items-center justify-center"
+          style={styles.pressableContainer}
           onPress={toggleControls}
-          style={{ width: screenWidth, height: screenHeight }}
         >
           {/* Video Player */}
-          <View
-            style={[
-              styles.videoWrapper,
-              { width: screenWidth, height: screenHeight },
-            ]}
-          >
+          <View style={styles.videoWrapper}>
             <Video
               ref={videoRef}
               source={{ uri: videoUrl }}
-              style={[
-                styles.video,
-                { width: screenWidth, height: screenHeight },
-              ]}
+              style={styles.video}
               resizeMode={ResizeMode.CONTAIN}
               onPlaybackStatusUpdate={onPlaybackStatusUpdate}
               shouldPlay={false}
@@ -114,20 +111,14 @@ export default function VideoModal({
 
           {/* Loading Indicator */}
           {isBuffering && (
-            <View className="absolute inset-0 items-center justify-center">
+            <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="white" />
             </View>
           )}
 
           {/* Controls Overlay */}
           {showControls && (
-            <View
-              className="absolute inset-0"
-              style={[
-                styles.controlsOverlay,
-                { width: screenWidth, height: screenHeight },
-              ]}
-            >
+            <View style={styles.controlsOverlay}>
               {/* Close Button */}
               <Pressable onPress={onClose} style={styles.closeButton}>
                 <Ionicons name="close" size={30} color="white" />
@@ -138,7 +129,6 @@ export default function VideoModal({
                 {/* Rewind 15s Button */}
                 <Pressable onPress={handleRewind} style={styles.controlButton}>
                   <RewindIcon />
-                  
                 </Pressable>
 
                 {/* Play/Pause Button */}
@@ -163,27 +153,65 @@ export default function VideoModal({
   );
 }
 
-const createVideoStyles = () =>
-  StyleSheet.create({
+const createVideoStyles = (
+  isWeb: boolean, 
+  screenWidth: number, 
+  screenHeight: number, 
+  maxWebWidth: number, 
+  maxWebHeight: number
+) => {
+  // Calculate dimensions for web to maintain aspect ratio
+  const webWidth = Math.min(screenWidth, maxWebWidth);
+  const webHeight = Math.min(screenHeight, maxWebHeight);
+  const aspectRatio = 16/9; // Standard video aspect ratio
+  
+  // For web, we want to maintain aspect ratio and not take full screen
+  const videoWidth = isWeb ? webWidth : screenWidth;
+  const videoHeight = isWeb ? Math.min(webWidth / aspectRatio, webHeight) : screenHeight;
+  
+  return StyleSheet.create({
     container: {
-      backgroundColor: "#000000",
       flex: 1,
+      backgroundColor: "#000000",
+      justifyContent: isWeb ? 'center' : 'flex-start',
+      alignItems: isWeb ? 'center' : 'stretch',
+    },
+    pressableContainer: {
+      width: videoWidth,
+      height: videoHeight,
+      alignItems: 'center',
+      justifyContent: 'center',
+      // Center on web with some margin
+      margin: isWeb ? 20 : 0,
     },
     videoWrapper: {
-      position: "absolute",
-      top: 0,
-      left: 0,
+      width: '100%',
+      height: '100%',
       backgroundColor: "#000000",
       overflow: "hidden",
     },
     video: {
+      width: '100%',
+      height: '100%',
       backgroundColor: "#000000",
     },
-    controlsOverlay: {
-      backgroundColor: "rgba(0, 0, 0, 0.3)",
+    loadingContainer: {
       position: "absolute",
       top: 0,
       left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    controlsOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.3)",
+      justifyContent: 'space-between',
     },
     closeButton: {
       position: "absolute",
@@ -200,13 +228,7 @@ const createVideoStyles = () =>
       gap: 40,
     },
     controlButton: {
-      // width: 60,
-      // height: 60,
-      // borderRadius: 30,
-      // backgroundColor: "rgba(0, 0, 0, 0.6)",
-      // alignItems: "center",
-      // justifyContent: "center",
-      // position: "relative",
+      // Your existing control button styles
     },
     playButton: {
       width: 80,
@@ -216,83 +238,16 @@ const createVideoStyles = () =>
       alignItems: "center",
       justifyContent: "center",
     },
-    rewindIcon: {
+    // Add responsive text styles if needed
+    timeText: {
+      color: "white",
+      fontSize: isWeb ? 16 : 14,
+      fontWeight: "bold",
       position: "absolute",
-      top: 12,
+      bottom: 12,
       left: 0,
       right: 0,
-      alignItems: "center",
+      textAlign: "center",
     },
-    forwardIcon: {
-      position: "absolute",
-      top: 12,
-      left: 0,
-      right: 0,
-      alignItems: "center",
-    },
-      timeText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "bold",
-    position: "absolute",
-    bottom: 12,
-    left: 0,
-    right: 0,
-    textAlign: "center",
-  },
-  circularArrowRewind: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "white",
-    borderTopColor: "transparent",
-    borderRightColor: "transparent",
-    transform: [{ rotate: "45deg" }],
-  },
-  arrowHeadRewind: {
-    position: "absolute",
-    top: -2,
-    left: 8,
-    width: 0,
-    height: 0,
-    borderLeftWidth: 6,
-    borderRightWidth: 0,
-    borderTopWidth: 3,
-    borderBottomWidth: 3,
-    borderLeftColor: "white",
-    borderTopColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "transparent",
-    transform: [{ rotate: "-45deg" }],
-  },
-  circularArrowForward: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "white",
-    borderBottomColor: "transparent",
-    borderLeftColor: "transparent",
-    transform: [{ rotate: "-45deg" }],
-  },
-  arrowHeadForward: {
-    position: "absolute",
-    bottom: -2,
-    right: 8,
-    width: 0,
-    height: 0,
-    borderRightWidth: 6,
-    borderLeftWidth: 0,
-    borderTopWidth: 3,
-    borderBottomWidth: 3,
-    borderRightColor: "white",
-    borderTopColor: "transparent",
-    borderLeftColor: "transparent",
-    borderBottomColor: "transparent",
-    transform: [{ rotate: "45deg" }],
-  },
-  icon: {
-    color: "#FFFFFF",
-  },
   });
+};
