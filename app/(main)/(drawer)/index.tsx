@@ -10,14 +10,16 @@ export default function DashboardScreen() {
   const styles = createWelcomeStyles(tokens);
 
   return (
-    <View
-      className={`flex-1 items-center justify-center px-4`}
-      style={styles.container}
-    >
-      <Text className={`text-3xl font-bold`} style={styles.title}>
-        Dashboard
-      </Text>
-    </View>
+    // <DrawerSceneWrapper>
+      <View
+        className={`flex-1 items-center justify-center px-4`}
+        style={styles.container}
+      >
+        <Text className={`text-3xl font-bold`} style={styles.title}>
+          Dashboard
+        </Text>
+      </View>
+ 
   );
 }
 

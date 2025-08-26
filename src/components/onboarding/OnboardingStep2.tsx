@@ -169,6 +169,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
             {/* Chat Area */}
             <FlatList
               ref={flatListRef}
+            
               data={messages}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item: message }) => (
@@ -221,7 +222,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
               )}
               style={styles.scrollView}
               contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={true}
+              showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               removeClippedSubviews={false}
               maxToRenderPerBatch={10}

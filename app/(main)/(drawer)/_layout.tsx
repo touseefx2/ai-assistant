@@ -4,11 +4,10 @@ import {
   MenuDashboard,
   MenuHelp,
   MenuProfile,
-  MenuSettings,
-  MenuTask,
+  MenuTask
 } from "@/assets/icons/Icons";
 import { Drawer } from "expo-router/drawer";
-import { Platform } from "react-native";
+import { Image, Platform } from "react-native";
 import type { RootState } from "../../../src/state/store";
 import { useAppSelector } from "../../../src/state/useStoreHooks";
 import { getThemeTokens } from "../../../src/theme/tokens";
@@ -21,7 +20,7 @@ export default function DrawerLayout() {
     <Drawer
       screenOptions={{
         drawerType: "slide",
-        headerShown: true,
+        headerShown: false,
         headerTintColor: tokens.text,
         headerStyle: { backgroundColor: tokens.background },
         drawerActiveBackgroundColor: "transparent",
@@ -31,7 +30,7 @@ export default function DrawerLayout() {
           backgroundColor: tokens.primary,
           width: "60%",
         },
-        sceneContainerStyle: {
+        sceneStyle: {
           backgroundColor: tokens.primary,
         },
         drawerHideStatusBarOnOpen: Platform.OS === "ios" ? true : false,
@@ -39,7 +38,7 @@ export default function DrawerLayout() {
         drawerLabelStyle: {
           color: tokens.white,
           fontFamily: "Satoshi-Medium",
-          fontSize: 17,
+          fontSize: 16,
         },
       }}
     >
@@ -102,7 +101,8 @@ export default function DrawerLayout() {
         options={{
           title: "Settings",
           drawerIcon: ({ color, size }) => (
-            <MenuSettings width={size} height={size} />
+            <Image source={require("../../../assets/images/menuSettings.png")} style={{ width: size, height: size }} />
+            // <MenuSettings width={size} height={size} />
           ),
         }}
       />
