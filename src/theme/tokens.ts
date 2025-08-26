@@ -2,6 +2,7 @@ import type { AppTheme } from "../state/themeSlice";
 
 export interface ThemeTokens {
   background: string;
+  backgroundWhite:string;
   text: string;
   subText: string;
   primary: string;
@@ -18,6 +19,7 @@ export interface ThemeTokens {
 export const THEME_TOKENS: Record<AppTheme, ThemeTokens> = {
   white: {
     background: "#FCFCFC",
+    backgroundWhite: "#FFFFFF",
     text: "#2C3E50",
     subText: "#6B7688",
     primary: "#365AB8",
@@ -32,6 +34,7 @@ export const THEME_TOKENS: Record<AppTheme, ThemeTokens> = {
   },
   black: {
     background: "#000000",
+    backgroundWhite: "#FFFFFF",
     text: "#FFFFFF",
     subText: "#94A3B8",
     primary: "#365AB8",
@@ -46,6 +49,7 @@ export const THEME_TOKENS: Record<AppTheme, ThemeTokens> = {
   },
   blue: {
     background: "#EFF6FF",
+    backgroundWhite: "#FFFFFF",
     text: "#2C3E50",
     subText: "#1E40AF",
     primary: "#365AB8",

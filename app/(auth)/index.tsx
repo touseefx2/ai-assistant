@@ -29,9 +29,9 @@ import { ThemeTokens, getThemeTokens } from "../../src/theme/tokens";
 export default function WelcomeScreen() {
   const theme = useAppSelector((s: RootState) => s.theme.current);
   const themeColors = getThemeTokens(theme);
+  const styles = createWelcomeStyles(themeColors);
   const { height } = Dimensions.get("window");
   const topMargin = 0.2;
-  const styles = createWelcomeStyles(themeColors);
 
   // Authentication hook
   const { signInWithGoogle, isLoading, error } = useAuth();

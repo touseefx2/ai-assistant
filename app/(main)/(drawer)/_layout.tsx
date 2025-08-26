@@ -4,7 +4,7 @@ import {
   MenuDashboard,
   MenuHelp,
   MenuProfile,
-  MenuTask
+  MenuTask,
 } from "@/assets/icons/Icons";
 import { Drawer } from "expo-router/drawer";
 import { Image, Platform } from "react-native";
@@ -36,9 +36,9 @@ export default function DrawerLayout() {
         drawerHideStatusBarOnOpen: Platform.OS === "ios" ? true : false,
         overlayColor: "transparent",
         drawerLabelStyle: {
-          color: tokens.white,
-          fontFamily: "Satoshi-Medium",
-          fontSize: 16,
+          color: tokens.black,
+          fontFamily: "Satoshi-bold",
+          fontSize: 18,
         },
       }}
     >
@@ -101,8 +101,10 @@ export default function DrawerLayout() {
         options={{
           title: "Settings",
           drawerIcon: ({ color, size }) => (
-            <Image source={require("../../../assets/images/menuSettings.png")} style={{ width: size, height: size }} />
-            // <MenuSettings width={size} height={size} />
+            <Image
+              source={require("../../../assets/images/menuSettings.png")}
+              style={{ width: size, height: size }}
+            />
           ),
         }}
       />
