@@ -57,13 +57,6 @@ export default function DrawerHeader({
         {/* Notification Bell */}
         <Pressable style={styles.iconButton} onPress={onNotificationPress}>
           <DrawerBellN />
-          {/* {notificationCount > 0 && (
-            <View style={styles.notificationBadge}>
-              <Text style={styles.notificationText}>
-                {notificationCount > 9 ? "9+" : notificationCount}
-              </Text>
-            </View>
-          )} */}
         </Pressable>
 
         {/* Refresh/History Icon */}

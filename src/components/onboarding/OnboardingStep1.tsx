@@ -74,6 +74,8 @@ export default function OnboardingStep1() {
                 activeOpacity={0.8}
                 style={{
                   marginBottom: 14,
+                  paddingHorizontal:15,
+                  paddingVertical:10,
                   borderColor: item.isSel
                     ? themeColors.primary
                     : themeColors.borderCheckBox,

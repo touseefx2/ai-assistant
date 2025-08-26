@@ -11,22 +11,24 @@ export default function DashboardScreen() {
   const styles = createWelcomeStyles(tokens);
 
   return (
-    <View style={styles.container}>
-      <DrawerHeader
-        title="Dashboard"
-        onNotificationPress={() => {}}
-        onRefreshPress={() => {}}
-        notificationCount={3}
-      />
-      <View
-        className={`flex-1 items-center justify-center px-4`}
-        style={styles.content}
-      >
-        <Text className={`text-3xl font-bold`} style={styles.title}>
-          Dashboard
-        </Text>
+    // <DrawerSceneWrapper>
+      <View style={styles.container}>
+        <DrawerHeader
+          title="Dashboard"
+          onNotificationPress={() => {}}
+          onRefreshPress={() => {}}
+          notificationCount={3}
+        />
+        <View
+          className={`flex-1 items-center justify-center px-4`}
+          style={styles.content}
+        >
+          <Text className={`text-3xl font-bold`} style={styles.title}>
+            Dashboard
+          </Text>
+        </View>
       </View>
-    </View>
+ 
   );
 }
 
