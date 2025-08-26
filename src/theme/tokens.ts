@@ -4,6 +4,7 @@ export interface ThemeTokens {
   background: string;
   backgroundWhite:string;
   text: string;
+  textBlack:string;
   subText: string;
   primary: string;
   primaryLight: string;
@@ -21,6 +22,7 @@ export const THEME_TOKENS: Record<AppTheme, ThemeTokens> = {
     background: "#FCFCFC",
     backgroundWhite: "#FFFFFF",
     text: "#2C3E50",
+    textBlack: "#000000",
     subText: "#6B7688",
     primary: "#365AB8",
     primaryLight:"#E0E6F4" ,
@@ -36,6 +38,7 @@ export const THEME_TOKENS: Record<AppTheme, ThemeTokens> = {
     background: "#000000",
     backgroundWhite: "#FFFFFF",
     text: "#FFFFFF",
+    textBlack: "#000000",
     subText: "#94A3B8",
     primary: "#365AB8",
     primaryLight:"#E0E6F4" ,
@@ -51,6 +54,7 @@ export const THEME_TOKENS: Record<AppTheme, ThemeTokens> = {
     background: "#EFF6FF",
     backgroundWhite: "#FFFFFF",
     text: "#2C3E50",
+    textBlack: "#000000",
     subText: "#1E40AF",
     primary: "#365AB8",
     primaryLight:"#E0E6F4" ,

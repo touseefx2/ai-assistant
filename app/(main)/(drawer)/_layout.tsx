@@ -28,7 +28,7 @@ export default function DrawerLayout() {
         drawerInactiveTintColor: "transparent",
         drawerStyle: {
           backgroundColor: tokens.primary,
-          width: "60%",
+          width: "65%",
         },
         sceneStyle: {
           backgroundColor: tokens.primary,
@@ -36,10 +36,11 @@ export default function DrawerLayout() {
         drawerHideStatusBarOnOpen: Platform.OS === "ios" ? true : false,
         overlayColor: "transparent",
         drawerLabelStyle: {
-          color: tokens.black,
+          color: tokens.white,
           fontFamily: "Satoshi-bold",
-          fontSize: 18,
+          fontSize: 16,
         },
+      
       }}
     >
       <Drawer.Screen
