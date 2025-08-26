@@ -17,6 +17,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -41,6 +42,7 @@ export default function WelcomeScreen() {
 
   return (
     <View className="flex-1" style={styles.container}>
+      <StatusBar barStyle={"dark-content"} backgroundColor={"white"} />
       <ScrollView
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -178,11 +180,13 @@ export default function WelcomeScreen() {
       </ScrollView>
 
       {/* Video Modal */}
-      <VideoModal
-        isVisible={isVideoModalVisible}
-        onClose={() => setIsVideoModalVisible(false)}
-        themeColors={themeColors}
-      />
+     
+        <VideoModal
+          isVisible={isVideoModalVisible}
+          onClose={() => setIsVideoModalVisible(false)}
+          themeColors={themeColors}
+        />
+     
     </View>
   );
 }

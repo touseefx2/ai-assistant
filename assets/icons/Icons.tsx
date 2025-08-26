@@ -1,5 +1,5 @@
 import React from "react";
-import Svg, { Circle, ClipPath, Defs, G, Path, Rect } from "react-native-svg";
+import Svg, { Circle, ClipPath, Defs, G, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 
 export type IconProps = {
   width?: number;
@@ -755,3 +755,140 @@ export const MenuSettings: React.FC<IconProps> = ({
     </Svg>
   );
  
+
+  export const RewindIcon: React.FC<IconProps> = ({
+    width = 50,
+    height = 49,
+    style,
+  }) => (
+    <Svg
+      width={width}
+      height={height}
+      viewBox="0 0 50 49"
+      fill="none"
+      style={style}
+    >
+      {/* Background circle */}
+      <G>
+        <Circle cx="24.6667" cy="24.5" r="23.6667" fill="black" fillOpacity="0.25" />
+        <Circle
+          cx="24.6667"
+          cy="24.5"
+          r="24.0365"
+          stroke="url(#paint0_linear)"
+          strokeOpacity="0.2"
+          strokeWidth="0.739583"
+        />
+      </G>
+  
+      {/* Clock/rewind strokes */}
+      <Path
+        d="M22.4479 28.9375V21.5417L20.9688 22.9284"
+        stroke="white"
+        strokeOpacity="0.7"
+        strokeWidth="1.10938"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M25.4062 28.4754C25.7925 28.7656 26.2727 28.9375 26.793 28.9375C28.0694 28.9375 29.1042 27.9027 29.1042 26.6263C29.1042 25.3499 28.0694 24.3151 26.793 24.3151C26.2727 24.3151 25.7925 24.487 25.4062 24.7772L25.8685 21.5417H29.1042"
+        stroke="white"
+        strokeOpacity="0.7"
+        strokeWidth="1.10938"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M17.6048 17.415C13.4226 21.2893 13.1939 27.7982 17.0938 31.9529C20.9938 36.1076 27.5456 36.3349 31.7278 32.4606C35.91 28.5862 36.1388 22.0774 32.2389 17.9227C30.0206 15.5595 26.9443 14.4669 23.9341 14.6771M25.4059 12.2969L22.7687 14.795L25.4059 17.474"
+        stroke="white"
+        strokeOpacity="0.7"
+        strokeWidth="1.84896"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+  
+      {/* Gradient defs */}
+      <Defs>
+        <LinearGradient
+          id="paint0_linear"
+          x1="42.7984"
+          y1="4.07796"
+          x2="24.6667"
+          y2="48.1667"
+          gradientUnits="userSpaceOnUse"
+        >
+          <Stop stopColor="white" />
+          <Stop offset="1" stopColor="white" stopOpacity="0" />
+        </LinearGradient>
+      </Defs>
+    </Svg>
+  );
+
+
+  export const NextIcon: React.FC<IconProps> = ({
+    width = 50,
+    height = 49,
+    style,
+  }) => (
+    <Svg
+      width={width}
+      height={height}
+      viewBox="0 0 50 49"
+      fill="none"
+      style={style}
+    >
+      {/* Background circle */}
+      <G>
+        <Circle cx="24.6667" cy="24.5" r="23.6667" fill="black" fillOpacity="0.25" />
+        <Circle
+          cx="24.6667"
+          cy="24.5"
+          r="24.0365"
+          stroke="url(#paint0_linear)"
+          strokeOpacity="0.2"
+          strokeWidth="0.739583"
+        />
+      </G>
+  
+      {/* Arrow / next paths */}
+      <Path
+        d="M22.7819 29.2708V21.875L21.3027 23.2617"
+        stroke="white"
+        strokeOpacity="0.7"
+        strokeWidth="1.10938"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M25.7402 28.8088C26.1265 29.0989 26.6067 29.2708 27.127 29.2708C28.4034 29.2708 29.4382 28.2361 29.4382 26.9596C29.4382 25.6832 28.4034 24.6484 27.127 24.6484C26.6067 24.6484 26.1265 24.8204 25.7402 25.1105L26.2025 21.875H29.4382"
+        stroke="white"
+        strokeOpacity="0.7"
+        strokeWidth="1.10938"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M32.0622 17.7483C36.2443 21.6227 36.4731 28.1315 32.5732 32.2862C28.6732 36.4409 22.1213 36.6682 17.9392 32.7939C13.757 28.9196 13.5282 22.4107 17.4281 18.256C19.6464 15.8928 22.7227 14.8002 25.7329 15.0104M24.2611 12.6302L26.8982 15.1283L24.2611 17.8073"
+        stroke="white"
+        strokeOpacity="0.7"
+        strokeWidth="1.84896"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+  
+      {/* Gradient */}
+      <Defs>
+        <LinearGradient
+          id="paint0_linear"
+          x1="42.7984"
+          y1="4.07796"
+          x2="24.6667"
+          y2="48.1667"
+          gradientUnits="userSpaceOnUse"
+        >
+          <Stop stopColor="white" />
+          <Stop offset="1" stopColor="white" stopOpacity="0" />
+        </LinearGradient>
+      </Defs>
+    </Svg>
+  );
