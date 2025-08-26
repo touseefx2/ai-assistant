@@ -175,7 +175,7 @@ export default function OnboardingStep2({ messages, setMessages }) {
               renderItem={({ item: message }) => (
                 <View style={styles.messageWrapper}>
                   <View
-                    className={`flex-row items-start gap-3 ${
+                    className={`flex-row items-start gap-2 ${
                       message.isBot ? "" : "justify-end"
                     }`}
                   >
@@ -205,8 +205,9 @@ export default function OnboardingStep2({ messages, setMessages }) {
 
                     {!message.isBot && (
                       <View style={[styles.avatar, styles.userAvatar]}>
-                        <Text style={styles.avatarText}>
-                          {getInitials(message.text, false)}
+                        <Text style={[styles.avatarText,styles.userAvatarText]}>
+                          SS
+                          {/* {getInitials(message.text, false)} */}
                         </Text>
                       </View>
                     )}
@@ -326,12 +327,16 @@ const createStyles = (theme: ThemeTokens) =>
       justifyContent: "center",
     },
     userAvatar: {
-      backgroundColor: theme.borderDark,
+      backgroundColor: "#D7E2FF",
     },
     avatarText: {
       color: theme.white,
       fontSize: 14,
       fontWeight: "600",
+    },
+    userAvatarText: {
+      color: theme.primary,
+      
     },
     bubble: {
       paddingVertical: 12,
@@ -345,8 +350,10 @@ const createStyles = (theme: ThemeTokens) =>
       borderBottomLeftRadius: 4,
     },
     userBubble: {
-      backgroundColor: theme.borderDark,
+      backgroundColor: theme.white,
       borderBottomRightRadius: 4,
+      borderWidth:1,
+      borderColor:"#776F6929",
     },
     botBubbleText: {
       fontSize: 15,
@@ -355,7 +362,7 @@ const createStyles = (theme: ThemeTokens) =>
     },
     userBubbleText: {
       fontSize: 15,
-      color: theme.white,
+      color: theme.black,
       lineHeight: 20,
     },
     timestamp: {
@@ -433,15 +440,15 @@ const createStyles = (theme: ThemeTokens) =>
       gap: 8,
     },
     suggestionButton: {
-      paddingVertical: 8,
-      paddingHorizontal: 16,
+      paddingVertical: 5,
+      paddingHorizontal: 10,
       borderRadius: 20,
       borderWidth: 1,
       borderColor: theme.border,
       backgroundColor: theme.background,
     },
     suggestionText: {
-      fontSize: 14,
+      fontSize: 13,
       color: theme.text,
       fontWeight: "500",
     },
