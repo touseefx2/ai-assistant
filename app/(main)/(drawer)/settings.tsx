@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import DrawerHeader from "../../../components/DrawerHeade";
+import DrawerHeader from "../../../components/DrawerHeader";
 import { Dropdown } from "../../../src/components/Dropdown";
 import { setLanguage } from "../../../src/state/languageSlice";
 import type { RootState } from "../../../src/state/store";

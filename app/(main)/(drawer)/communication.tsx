@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import DrawerHeader from "../../../components/DrawerHeade";
+import DrawerHeader from "../../../components/DrawerHeader";
 import type { RootState } from "../../../src/state/store";
 import { useAppSelector } from "../../../src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "../../../src/theme/tokens";

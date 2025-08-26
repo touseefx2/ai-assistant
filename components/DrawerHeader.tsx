@@ -33,28 +33,31 @@ export default function DrawerHeader({
 
   return (
     <View style={styles.container}>
-      {/* Left - Hamburger Menu */}
-      <Pressable
-        style={styles.menuButton}
-        onPress={() => {
-          navigation?.openDrawer();
-        }}
-      >
-        <DrawerMenu />
-      </Pressable>
+      {/* Left section with menu button - used to balance the right section */}
+      <View style={styles.leftSection}>
+        <Pressable
+          style={styles.menuButton}
+          onPress={() => {
+            navigation?.openDrawer();
+          }}
+        >
+          <DrawerMenu />
+        </Pressable>
+      </View>
 
       {/* Center - Title */}
-      <Text className="font-bold" style={styles.title}>
-        {title}
-      </Text>
+      <View style={styles.centerSection}>
+        <Text numberOfLines={1} className="font-bold" style={styles.title}>
+          {title}
+        </Text>
+      </View>
 
       {/* Right - Icons */}
-      <View style={styles.rightIcons}>
+      <View style={styles.rightSection}>
         {/* Notification Bell */}
         <Pressable style={styles.iconButton} onPress={onNotificationPress}>
           <DrawerBellN />
-          {/* <Ionicons name="notifications" size={24} color="#333" />
-          {notificationCount > 0 && (
+          {/* {notificationCount > 0 && (
             <View style={styles.notificationBadge}>
               <Text style={styles.notificationText}>
                 {notificationCount > 9 ? "9+" : notificationCount}
@@ -77,7 +80,6 @@ export const createWelcomeStyles = (theme: ThemeTokens) =>
     container: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
       backgroundColor: theme.backgroundWhite,
       paddingHorizontal: 16,
       paddingVertical: 12,
@@ -86,19 +88,29 @@ export const createWelcomeStyles = (theme: ThemeTokens) =>
       borderBottomWidth: 1,
       borderBottomColor: theme.border,
     },
+    leftSection: {
+      flex: 1,
+      alignItems: "flex-start",
+    },
+    centerSection: {
+      flex: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    rightSection: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      gap: 8,
+    },
     menuButton: {
       padding: 8,
     },
     title: {
       fontSize: 17,
       color: theme.textBlack,
-      flex: 1,
       textAlign: "center",
-    },
-    rightIcons: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
     },
     iconButton: {
       padding: 8,
