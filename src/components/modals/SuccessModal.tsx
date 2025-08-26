@@ -18,6 +18,7 @@ export default function SuccessModal({ isVisible }: SuccessModal) {
       visible={isVisible}
       animationType="fade"
       presentationStyle="fullScreen"
+      statusBarTranslucent
     >
       <Pressable style={styles.successContainer} onPress={() => { router.replace("/(main)/(drawer)");}}>
         <Image

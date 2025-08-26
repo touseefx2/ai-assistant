@@ -8,10 +8,9 @@ import {
   Modal,
   Platform,
   Pressable,
-  StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 
 // Import voice recognition for mobile
@@ -436,14 +435,14 @@ export default function VoiceRecordingModal({
     <Modal
       visible={isVisible}
       animationType="slide"
-      presentationStyle="fullScreen"
+       presentationStyle="fullScreen"
       statusBarTranslucent
     >
       <View style={styles.container}>
-        <StatusBar
+        {/* <StatusBar
           barStyle="dark-content"
-          backgroundColor={themeColors.white}
-        />
+          backgroundColor={themeColors.black}
+        /> */}
 
         {/* Header */}
         <View style={styles.header}>
