@@ -8,6 +8,7 @@ import {
   MenuTask,
 } from "@/assets/icons/Icons";
 import { Drawer } from "expo-router/drawer";
+import { Platform } from "react-native";
 import type { RootState } from "../../../src/state/store";
 import { useAppSelector } from "../../../src/state/useStoreHooks";
 import { getThemeTokens } from "../../../src/theme/tokens";
@@ -28,7 +29,13 @@ export default function DrawerLayout() {
         drawerInactiveTintColor: "transparent",
         drawerStyle: {
           backgroundColor: tokens.primary,
+          width: "60%",
         },
+        sceneContainerStyle: {
+          backgroundColor: tokens.primary,
+        },
+        drawerHideStatusBarOnOpen: Platform.OS === "ios" ? true : false,
+        overlayColor: "transparent",
         drawerLabelStyle: {
           color: tokens.white,
           fontFamily: "Satoshi-Medium",

@@ -4,6 +4,7 @@ import type { AppLanguage } from './languageSlice';
 import language from './languageSlice';
 import type { AppTheme } from './themeSlice';
 import theme from './themeSlice';
+import user from './userSlice';
 
 const THEME_KEY = 'theme.current';
 const LANG_KEY = 'language.current';
@@ -39,7 +40,7 @@ export const persistMiddleware = (storeAPI: any) => (next: any) => async (action
 };
 
 export const store = configureStore({
-	reducer: { theme, language },
+	reducer: { theme, language, user },
 	middleware: (gDM) => gDM().concat(persistMiddleware),
 });
 

@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   Platform,
@@ -20,6 +21,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useAuth } from "../../src/hooks/useAuth";
 import type { RootState } from "../../src/state/store";
 import { useAppSelector } from "../../src/state/useStoreHooks";
 import { ThemeTokens, getThemeTokens } from "../../src/theme/tokens";
@@ -30,6 +32,9 @@ export default function WelcomeScreen() {
   const { height } = Dimensions.get("window");
   const topMargin = 0.2;
   const styles = createWelcomeStyles(themeColors);
+
+  // Authentication hook
+  const { signInWithGoogle, isLoading, error } = useAuth();
 
   // Video modal state
   const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
@@ -85,21 +90,33 @@ export default function WelcomeScreen() {
             )}
           </View>
 
+          {/* Error Display */}
+          {error && (
+            <View className="w-full max-w-[560px] px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
+              <Text className="text-red-600 text-sm text-center">{error}</Text>
+            </View>
+          )}
+
           {/* Google + Apple Buttons + Demo */}
           <View className="w-full items-center gap-5 px-12">
             {/* Google Button */}
             <Pressable
-             onPress={() => router.navigate("/onboarding")}
-              // onPress={() => router.replace("/(main)/(drawer)")}
+              onPress={() => router.navigate("/onboarding")}
+              // onPress={signInWithGoogle}
+              disabled={isLoading}
               className="flex-row items-center justify-center w-full max-w-[560px] py-4 rounded-[12px] border"
-              style={styles.button}
+              style={[styles.button, isLoading && styles.disabledButton]}
             >
-              <GoogleIcon />
+              {isLoading ? (
+                <ActivityIndicator size="small" color={themeColors.text} />
+              ) : (
+                <GoogleIcon />
+              )}
               <Text
                 className="ml-3 text-base font-semibold text-[16px]"
                 style={styles.text}
               >
-                Continue with Google
+                {isLoading ? "Signing in..." : "Continue with Google"}
               </Text>
             </Pressable>
 
@@ -215,5 +232,8 @@ export const createWelcomeStyles = (theme: ThemeTokens) =>
           boxShadow: "0px 1px 3px rgba(0,0,0,0.12)",
         },
       }),
+    },
+    disabledButton: {
+      opacity: 0.6,
     },
   });
