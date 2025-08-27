@@ -1,42 +1,36 @@
-import * as AuthSession from 'expo-auth-session';
-import * as WebBrowser from 'expo-web-browser';
-import { Platform } from 'react-native';
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
+import { Platform } from "react-native";
 
 // Configure WebBrowser for web
-if (Platform.OS === 'web') {
+if (Platform.OS === "web") {
   WebBrowser.maybeCompleteAuthSession();
 }
 
 // Google OAuth configuration
-const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_SECRET || '';
-
-
+const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_SECRET = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_SECRET || "";
 
 // Scopes for Google authentication
-const GOOGLE_SCOPES = [
-  'openid',
-  'profile',
-  'email',
-];
+const GOOGLE_SCOPES = ["openid", "profile", "email"];
 
 // Redirect URI configuration
 const getRedirectUri = () => {
-  if (Platform.OS === 'web') {
-    // return 'http://localhost:8000' 
-      return 'http://localhost:8081';
+  if (Platform.OS === "web") {
+    // return 'http://localhost:8000'
+    return "http://localhost:8081";
   }
   return AuthSession.makeRedirectUri({
-    scheme: 'aiassistant',
-    path: 'auth',
+    scheme: "aiassistant",
+    path: "auth",
   });
 };
 
 // Google OAuth discovery document
 const googleDiscovery = {
-  authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
-  tokenEndpoint: 'https://oauth2.googleapis.com/token',
-  revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
+  authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+  tokenEndpoint: "https://oauth2.googleapis.com/token",
+  revocationEndpoint: "https://oauth2.googleapis.com/revoke",
 };
 
 export interface GoogleUser {
@@ -72,11 +66,10 @@ export class GoogleAuthService {
       if (!GOOGLE_CLIENT_ID) {
         return {
           success: false,
-          error: 'Google Client ID not configured. Please set EXPO_PUBLIC_GOOGLE_CLIENT_ID in your environment variables.',
+          error:
+            "Google Client ID not configured. Please set EXPO_PUBLIC_GOOGLE_CLIENT_ID in your environment variables.",
         };
       }
-
-
 
       // Create auth request
       const request = new AuthSession.AuthRequest({
@@ -85,8 +78,8 @@ export class GoogleAuthService {
         redirectUri: getRedirectUri(),
         responseType: AuthSession.ResponseType.Code,
         extraParams: {
-          prompt: 'select_account',
-          access_type: 'offline',
+          prompt: "select_account",
+          access_type: "offline",
         },
       });
 
@@ -95,7 +88,7 @@ export class GoogleAuthService {
         showInRecents: true,
       });
 
-      if (result.type === 'success' && result.params.code) {
+      if (result.type === "success" && result.params.code) {
         // Exchange code for tokens
         const tokenResult = await AuthSession.exchangeCodeAsync(
           {
@@ -104,17 +97,16 @@ export class GoogleAuthService {
             code: result.params.code,
             redirectUri: getRedirectUri(),
             extraParams: {
-              code_verifier: request.codeVerifier || '',
+              code_verifier: request.codeVerifier || "",
             },
           },
           googleDiscovery
         );
-        console.log("tokenResult : ",tokenResult)
+        console.log("tokenResult : ", tokenResult);
         if (tokenResult.accessToken) {
-          
           // Get user info
           const userInfo = await this.getUserInfo(tokenResult.accessToken);
-          
+
           return {
             success: true,
             user: userInfo,
@@ -124,20 +116,21 @@ export class GoogleAuthService {
 
       return {
         success: false,
-        error: 'Authentication was cancelled or failed',
+        error: "Authentication was cancelled or failed",
       };
     } catch (error) {
-      console.error('Google sign-in error:', error);
+      console.error("Google sign-in error:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
       };
     }
   }
 
   private async getUserInfo(accessToken: string): Promise<GoogleUser> {
     const response = await fetch(
-      'https://www.googleapis.com/oauth2/v2/userinfo',
+      "https://www.googleapis.com/oauth2/v2/userinfo",
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -146,7 +139,7 @@ export class GoogleAuthService {
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch user info');
+      throw new Error("Failed to fetch user info");
     }
 
     const userData = await response.json();
